@@ -1,30 +1,51 @@
-<?php 
-
-    require "functions.php";
 
 
-    class Database{
-        public $connection;
-        
-    public function __construct(){
-        $dsn = "pgsql:host=localhost;port=5432;dbname=db_php";
-        $user = 'postgres';
-        $password = 'qjmihuq';
-
-        $this ->connection = new PDO($dsn, $user, $password);
-
-    }
+  
+  
 
 
-    public function query($query){  
-        $statement = $this ->connection -> prepare($query);
-        $statement -> execute();
-
-        return $statement;
-    }
+  <main>
     
-}
-    $db = new Database();
-    $posts = $db -> query("select * from posts") -> fetchAll(PDO::FETCH_ASSOC);
-    $dd($posts);
-   
+
+ <?php 
+       session_start();
+       if (!isset($_SESSION['user'])){
+        header('location: register-controller.php');
+        exit();
+       }else {
+
+                  require 'components/doc.php' ;
+                require 'pdo.php' ;
+                 $db = new Database();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $errors = [];
+            $success = [];
+            if (strlen($_POST['body']) === 0) {
+                $errors['body'] = 'E drasni neshto ne se svidi';
+            }
+        
+           
+            if (strlen($_POST['body']) > 1000) {
+                $errors['body'] = 'Skysi go toq text';
+            }
+        
+            if (empty($errors)) {
+                $sucess['success'] = 'Postna go chikiq';
+                $db->query_p('INSERT INTO notes(body, user_id) VALUES(:body, :user_id)', [
+                    'body' => $_POST['body'],
+                    'user_id' => $_SESSION['user']['id']
+                ]);
+
+              
+               
+                
+                
+            }
+        }}
+                ?>
+        
+
+    <?php require 'pcomment.php'?>
+  </main>
+</div>  
+
